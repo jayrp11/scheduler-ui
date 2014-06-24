@@ -1,0 +1,25 @@
+<form class="form">
+	<div class="form-group">
+		<input type="text" class="form-control" placeholder="Title" ng-model="sub_schedule.title">
+	</div>
+	<div class="form-group">
+		<input type="text" class="form-control" placeholder="Start time" ng-model="sub_schedule.start_time">
+	</div>
+	<div class="form-group">
+		<input type="text" class="form-control" placeholder="End time" ng-model="sub_schedule.end_time">
+	</div>
+	<div class="form-group">
+		<input type="text" class="form-control" placeholder="Presenter" ng-model="sub_schedule.presenter">
+	</div>
+	<div class="form-group">
+		<input type="text" class="form-control" placeholder="Lead" ng-model="sub_schedule.lead">
+	</div>
+	<div class="form-group">
+		<label class="checkbox-inline" ng-repeat="resource in resources">
+			<input type="checkbox" checklist-model="sub_schedule.resources" checklist-value="resource.id"> {{ resource.name }}
+		</label>
+	</div>
+	<div class="form-group">
+		<button type="submit" class="btn btn-primary" ng-click="edit()">Save</button>
+	</div>
+</form>

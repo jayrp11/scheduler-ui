@@ -1,0 +1,29 @@
+<div> 
+  <h1>{{ schedule.theme }}</h1>
+  <h2>{{ schedule.s_date }}</h2>
+  <table class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Start time</th>
+        <th>End time</th>
+        <th>Presenter</th>
+        <th>Lead</th>
+        <th>Resources</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="sub_schedule in schedule.sub_schedules">
+        <td>{{ sub_schedule.title }}</td>
+        <td>{{ sub_schedule.start_time }}</td>
+        <td>{{ sub_schedule.end_time }}</td>
+        <td>{{ sub_schedule.presenter }}</td>
+        <td>{{ sub_schedule.lead }}</td>
+        <td>{{ sub_schedule.resources }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="form-group">
+    <button type="button" class="btn btn-default" ng-click="edit(schedule)">Edit Schedule</button>
+  </div>
+</div>
