@@ -4,11 +4,16 @@ app.config(function(RestangularProvider) {
   RestangularProvider.setBaseUrl('http://localhost/scheduler-api/');
 });
 
-app.run(['Restangular', '$location', function(Restangular, $location) {
+app.run(['Restangular', '$location', 'AuthService', function(Restangular, $location, AuthService) {
+  AuthService.requestCurrentUser();
   Restangular.setErrorInterceptor(function(response, deferred, responseHandler) {
     if(response.status === 401) {
       $location.path('/auth');
       return false; // error handled
+    }
+    if(response.status === 500) {
+      $location.path('/auth');
+      return false;
     }
     return true; // error not handled
   });
@@ -18,8 +23,10 @@ app.config(['$routeProvider', function($routeProvider) {
   $routeProvider
     .when('/auth',
       { controller: 'AuthController',   templateUrl: 'partials/auth.html' })
+
     .when('/logout',
       { controller: 'LogoutController', template: '', redirectTo: '/auth' })
+
     .when('/schedules',
       { controller: 'ScheduleListController',   templateUrl: 'partials/schedules.html' })
 
@@ -42,24 +49,54 @@ app.config(['$routeProvider', function($routeProvider) {
       { redirectTo: '/schedules' });
 }]);
 
-app.controller('LogoutController', ['$scope', '$location', 'Restangular', function($scope, $location, Restangular) {
-  console.log('logout controller')
-  Restangular.all('auth/logout').post($scope.auth).then(function($auth) {
-    console.log($auth.username);
-    $location.path('/schedules');
-  }, function() {
-    console.log("Error");
-  });
+app.factory('AuthService', ['$location', '$http','Restangular', function($location, $http, Restangular) {
+  service = {
+    currentUser: null,
+    login: function(user) {
+      $http.post('/scheduler-api/auth/login', user).then(function(response) {
+        service.currentUser = response.data;
+        console.log(service.currentUser);
+        $location.path('/schedules');
+      });
+    },
+    logout: function() {
+      $http.get('/scheduler-api/auth/logout').then(function(response) {
+        service.currentUser = undefined
+        $location.path('/auth');
+      });
+    },
+    isAuthenticated: function() {
+      return !!service.currentUser;
+    },
+
+    requestCurrentUser: function() {
+      if ( this.isAuthenticated() ) {
+        return service.currentUser;
+      } else {
+        return $http.get('/scheduler-api/auth/currentUser').then(function(response) {
+          user = response.data;
+          return service.currentUser;
+        });
+      }
+    }
+  };
+  return service;
 }]);
 
-app.controller('AuthController', ['$scope', '$location', 'Restangular', function($scope, $location, Restangular) {
+app.controller('HeaderCtrl', ['$scope', 'AuthService', function($scope, AuthService) { 
+  $scope.isAuthenticated = AuthService.isAuthenticated;
+
+  $scope.home = function () {
+    console.log('home called');
+  }
+  $scope.logout = function () {
+    AuthService.logout();
+  }
+}]);
+
+app.controller('AuthController', ['$scope', 'AuthService', function($scope, AuthService) {
   $scope.validate = function() {
-    Restangular.all('auth/login').post($scope.auth).then(function($auth) {
-      console.log($auth.username);
-      $location.path('/schedules');
-    }, function() {
-      console.log("Error");
-    });
+    AuthService.login($scope.auth);
   };
 }]);
 
@@ -148,6 +185,17 @@ app.controller('SubScheduleNewController', ['$scope', '$location', '$routeParams
       console.log("Error");
     });
   };
+
+  $scope.time = function() {
+    console.log($scope.sub_schedule.start_time);
+    var regex = /^(\d+)[:\\-\s](\d+)([:\\-\s]([aApP][mM]))*/
+    var match = regex.exec($scope.sub_schedule.start_time);
+    if(match) {
+      console.log(match[1])
+      console.log(match[2])
+      console.log(match[4])
+    }
+  }
 }]);
 
 app.controller('SubScheduleEditController', ['$scope', '$location', '$routeParams', 'Restangular', function($scope, $location, $routeParams, Restangular) {
@@ -169,4 +217,13 @@ app.controller('SubScheduleEditController', ['$scope', '$location', '$routeParam
       console.log("Error");
     });
   };
+}]);
+
+app.directive('timePicker', [function() {
+  return {
+    templateUrl: 'partials/timepicker.html',
+    restrict: 'E',
+    replace: true,
+    scope: true
+  }
 }]);

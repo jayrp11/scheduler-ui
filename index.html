@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="css/app.css" >
   </head>
   <body>
+    <div ng-controller="HeaderCtrl">
+      <div ng-include="'partials/header.html'"></div>
+    </div>
     <div class="container" ng-view></div>
     <script type="text/javascript" src="js/lodash-2.4.1.compat.js"></script>
     <script type="text/javascript" src="js/angular-1.2.16.min.js"></script>
