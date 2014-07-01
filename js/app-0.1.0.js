@@ -6,6 +6,10 @@ app.config(function(RestangularProvider) {
 
 app.run(['Restangular', '$location', 'AuthService', function(Restangular, $location, AuthService) {
   AuthService.requestCurrentUser();
+
+  if(!AuthService.isAuthenticated())
+    $location.path('/auth');
+
   Restangular.setErrorInterceptor(function(response, deferred, responseHandler) {
     if(response.status === 401) {
       $location.path('/auth');
@@ -18,14 +22,11 @@ app.run(['Restangular', '$location', 'AuthService', function(Restangular, $locat
     return true; // error not handled
   });
 }]);
-
+  
 app.config(['$routeProvider', function($routeProvider) {
   $routeProvider
     .when('/auth',
       { controller: 'AuthController',   templateUrl: 'partials/auth.html' })
-
-    .when('/logout',
-      { controller: 'LogoutController', template: '', redirectTo: '/auth' })
 
     .when('/schedules',
       { controller: 'ScheduleListController',   templateUrl: 'partials/schedules.html' })
@@ -53,10 +54,10 @@ app.factory('AuthService', ['$location', '$http','Restangular', function($locati
   service = {
     currentUser: null,
     login: function(user) {
-      $http.post('/scheduler-api/auth/login', user).then(function(response) {
+      var req = $http.post('/scheduler-api/auth/login', user)
+      return req.then(function(response) {
         service.currentUser = response.data;
-        console.log(service.currentUser);
-        $location.path('/schedules');
+        return service.isAuthenticated();
       });
     },
     logout: function() {
@@ -74,7 +75,7 @@ app.factory('AuthService', ['$location', '$http','Restangular', function($locati
         return service.currentUser;
       } else {
         return $http.get('/scheduler-api/auth/currentUser').then(function(response) {
-          user = response.data;
+          service.currentUser = response.data;
           return service.currentUser;
         });
       }
@@ -94,9 +95,13 @@ app.controller('HeaderCtrl', ['$scope', 'AuthService', function($scope, AuthServ
   }
 }]);
 
-app.controller('AuthController', ['$scope', 'AuthService', function($scope, AuthService) {
+app.controller('AuthController', ['$scope', '$location','AuthService', function($scope, $location, AuthService) {
   $scope.validate = function() {
-    AuthService.login($scope.auth);
+    AuthService.login($scope.auth).then(function(loggedIn) {
+        $location.path('/schedules');
+    }, function(response) {
+      $scope.authError = 'Username or Password does not match.'
+    });
   };
 }]);
 
