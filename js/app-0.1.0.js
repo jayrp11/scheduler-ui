@@ -1,14 +1,14 @@
 var app = angular.module('schedular-ui', [ 'ngRoute', 'restangular', 'ui.bootstrap', 'checklist-model' ]);
 
 app.config(function(RestangularProvider) {
-  RestangularProvider.setBaseUrl('http://localhost/scheduler-api/');
+  RestangularProvider.setBaseUrl('/scheduler-api/');
 });
 
 app.run(['Restangular', '$location', 'AuthService', function(Restangular, $location, AuthService) {
-  AuthService.requestCurrentUser();
+  AuthService.requestCurrentUser()
 
-  if(!AuthService.isAuthenticated())
-    $location.path('/auth');
+  // if(!AuthService.isAuthenticated())
+  //   $location.path('/auth');
 
   Restangular.setErrorInterceptor(function(response, deferred, responseHandler) {
     if(response.status === 401) {
@@ -224,11 +224,31 @@ app.controller('SubScheduleEditController', ['$scope', '$location', '$routeParam
   };
 }]);
 
-app.directive('timePicker', [function() {
+// directive that prevents submit if there are still form errors
+app.directive('validSubmit', [ '$parse', function($parse) {
   return {
-    templateUrl: 'partials/timepicker.html',
-    restrict: 'E',
-    replace: true,
-    scope: true
+      // we need a form controller to be on the same element as this directive
+      // in other words: this directive can only be used on a &lt;form&gt;
+      require: 'form',
+      // one time action per form
+      link: function(scope, element, iAttrs, form) {
+        form.$submitted = false;
+        // get a hold of the function that handles submission when form is valid
+        var fn = $parse(iAttrs.validSubmit);
+        
+        // register DOM event handler and wire into Angular's lifecycle with scope.$apply
+        element.on('submit', function(event) {
+          scope.$apply(function() {
+            // on submit event, set submitted to true (like the previous trick)
+            form.$submitted = true;
+            // if form is valid, execute the submission handler function and reset form submission state
+            if (form.$valid) {
+              fn(scope, { $event : event });
+              form.$submitted = false;
+            }
+          });
+        });
+      }
+    };
   }
-}]);
+]);
