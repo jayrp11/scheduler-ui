@@ -175,6 +175,13 @@ app.controller('ScheduleEditController', ['$scope', '$location', '$routeParams',
   }
 }]);
 
+app.factory('SubScheduleService', ['$location', 'Restangular', function($location, $http, Restangular) {
+  service = {
+    
+  };
+  return service;
+}]);
+
 app.controller('SubScheduleNewController', ['$scope', '$location', '$routeParams', 'Restangular', function($scope, $location, $routeParams, Restangular) {
   var schedule = Restangular.one('schedules', $routeParams.scheduleId);
 
@@ -191,9 +198,9 @@ app.controller('SubScheduleNewController', ['$scope', '$location', '$routeParams
     });
   };
 
-  $scope.time = function() {
-    console.log($scope.sub_schedule.start_time);
-    var regex = /^(\d+)[:\\-\s](\d+)([:\\-\s]([aApP][mM]))*/
+  $scope.time = function(input) {
+    console.log(input);
+    var regex = /^(0?[1-9]|1[012])[:\\-\s]([0-5]*\d)([:\\-\s]([APap][mM]))?$/
     var match = regex.exec($scope.sub_schedule.start_time);
     if(match) {
       console.log(match[1])

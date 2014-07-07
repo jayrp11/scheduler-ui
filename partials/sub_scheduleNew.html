@@ -1,4 +1,4 @@
-<form class="form" name="schedule" valid-submit="validate()" novalidate>
+<form class="form" name="schedule" valid-submit="submit()" novalidate>
 	<div class="form-group" ng-class="{'has-error': form.$submitted && form.title.$invalid}">
 		<input type="text" name="title" class="form-control" placeholder="Title" ng-model="sub_schedule.title"
 			ng-required="true">
