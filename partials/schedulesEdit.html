@@ -6,7 +6,7 @@
   </div>
   <div class="form-group" ng-class="{'has-error': form.$submitted && form.s_date.$invalid}">
     <div class="input-group">
-      <input type="text" name="s_date" class="form-control" datepicker-popup="dd-MM-yyyy" ng-model="schedule.s_date" is-open="opened" min-date="minDate" max-date="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+      <input type="text" name="s_date" class="form-control" datepicker-popup="dd-MM-yyyy" ng-model="schedule.s_date" is-open="opened" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
       <span class="input-group-btn">
         <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
       </span>
@@ -31,7 +31,7 @@
         <td>{{ sub_schedule.end_time }}</td>
         <td>{{ sub_schedule.presenter }}</td>
         <td>{{ sub_schedule.lead }}</td>
-        <td>{{ sub_schedule.resources }}</td>
+        <td><span class="badge resource_name" ng-repeat="resource in sub_schedule.resources">{{ resource.name }}</span></td>
       </tr>
     </tbody>
   </table>

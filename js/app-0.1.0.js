@@ -116,7 +116,7 @@ app.controller('ScheduleListController', ['$scope', '$location', 'Restangular', 
   }
 }]);
 
-app.controller('ScheduleDetailController', ['$scope', '$location', '$routeParams', 'Restangular', function($scope, $location, $routeParams, Restangular) {
+app.controller('ScheduleDetailController', ['$scope', '$location', '$routeParams', '$filter','Restangular', function($scope, $location, $routeParams, $filter, Restangular) {
   var schedule = Restangular.one('schedules/' + $routeParams.scheduleId);
   schedule.get().then(function($schedule) {
     $scope.schedule = $schedule;
@@ -145,7 +145,7 @@ app.controller('ScheduleNewController', ['$scope', '$location', 'Restangular', f
   };
 }]);
 
-app.controller('ScheduleEditController', ['$scope', '$location', '$routeParams', 'Restangular', function($scope, $location, $routeParams, Restangular) {
+app.controller('ScheduleEditController', ['$scope', '$location', '$routeParams', '$filter', 'Restangular', function($scope, $location, $routeParams, $filter, Restangular) {
   var schedule = Restangular.one('schedules', $routeParams.scheduleId);
   schedule.get().then(function($schedule) {
     $scope.schedule = $schedule;
@@ -168,7 +168,7 @@ app.controller('ScheduleEditController', ['$scope', '$location', '$routeParams',
 
   $scope.save = function() {
     $scope.schedule.put().then(function($schedule) {
-      $location.path('/schedules/' + $schedule.id + '/edit');
+      $location.path('/schedules/' + $schedule.id);
     }, function($schedule) {
       console.log('Error saving schedule');
     });
@@ -214,6 +214,11 @@ app.controller('SubScheduleEditController', ['$scope', '$location', '$routeParam
   var sub_schedule = Restangular.one('schedules', $routeParams.scheduleId).one('sub_schedules', $routeParams.sub_scheduleId);
   
   sub_schedule.get().then(function($sub_schedule) {
+    resources = [];
+    angular.forEach($sub_schedule['resources'], function(value, key) {
+       this.push(value.id);
+     }, resources);
+    $sub_schedule['resources'] = resources;
     $scope.sub_schedule = $sub_schedule;
   });
 

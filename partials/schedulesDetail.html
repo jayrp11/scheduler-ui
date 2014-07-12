@@ -1,6 +1,6 @@
 <div> 
   <h1>{{ schedule.theme }}</h1>
-  <h2>{{ schedule.s_date }}</h2>
+  <h3><span class="glyphicon glyphicon-calendar"></span> {{ schedule.s_date | date:'MMM dd, yyyy' }}</h3>
   <table class="table table-striped table-bordered">
     <thead>
       <tr>
@@ -19,7 +19,7 @@
         <td>{{ sub_schedule.end_time }}</td>
         <td>{{ sub_schedule.presenter }}</td>
         <td>{{ sub_schedule.lead }}</td>
-        <td>{{ sub_schedule.resources }}</td>
+        <td><span class="badge resource_name" ng-repeat="resource in sub_schedule.resources">{{ resource.name }}</span>
       </tr>
     </tbody>
   </table>
