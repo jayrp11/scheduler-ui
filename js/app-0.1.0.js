@@ -84,11 +84,11 @@ app.factory('AuthService', ['$location', '$http','Restangular', function($locati
   return service;
 }]);
 
-app.controller('HeaderCtrl', ['$scope', 'AuthService', function($scope, AuthService) { 
+app.controller('HeaderCtrl', ['$scope', '$location','AuthService', function($scope, $location, AuthService) { 
   $scope.isAuthenticated = AuthService.isAuthenticated;
 
   $scope.home = function () {
-    console.log('home called');
+    $location.path('/schedules');
   }
   $scope.logout = function () {
     AuthService.logout();

@@ -1,39 +1,49 @@
 <form class="form" name="schedule" valid-submit="submit()" novalidate>
-	<div class="form-group" ng-class="{'has-error': form.$submitted && form.title.$invalid}">
-		<input type="text" name="title" class="form-control" placeholder="Title" ng-model="sub_schedule.title"
-			ng-required="true">
-		<div class="bg-danger" ng-show="schedule.$submitted && schedule.title.$error.required">Title is required</div>
+	<div class="row">
+		<div class="form-group col-md-8" ng-class="{'has-error': form.$submitted && form.title.$invalid}">
+			<input type="text" name="title" class="form-control" placeholder="Title" ng-model="sub_schedule.title"
+				ng-required="true">
+			<div class="bg-danger" ng-show="schedule.$submitted && schedule.title.$error.required">Title is required</div>
+		</div>
 	</div>
-	<div class="form-group" ng-class="{'has-error': form.$submitted && form.startTime.$invalid}">
-		<input type="text" name="startTime" class="form-control" placeholder="Start time" 
-			ng-model="sub_schedule.start_time" 
-			ng-required="true" 
-			ng-pattern="/^(0?[1-9]|1[012])[:\\-\s]([0-5]*\d)([:\\-\s][APap][mM])?$/">
-		<div class="bg-danger" ng-show="schedule.$submitted && schedule.startTime.$error.required">Start Time is required</div>
-		<div class="bg-danger" ng-show="schedule.$submitted && schedule.startTime.$error.pattern">Pattern does not match</div>
+	<div class="row">
+		<div class="form-group col-md-4" ng-class="{'has-error': form.$submitted && form.startTime.$invalid}">
+			<input type="text" name="startTime" class="form-control" placeholder="Start time" 
+				ng-model="sub_schedule.start_time" 
+				ng-required="true" 
+				ng-pattern="/^(0?[1-9]|1[012])[:\\-\s]([0-5]*\d)([:\\-\s][APap][mM])?$/">
+			<div class="bg-danger" ng-show="schedule.$submitted && schedule.startTime.$error.required">Start Time is required</div>
+			<div class="bg-danger" ng-show="schedule.$submitted && schedule.startTime.$error.pattern">Pattern does not match</div>
+		</div>
 	</div>
-	<div class="form-group" ng-class="{'has-error': form.$submitted && form.endTime.$invalid}">
-		<input type="text" name="endTime" class="form-control" placeholder="End time" 
-			ng-model="sub_schedule.end_time"
-			ng-required="true" 
-			ng-pattern="/^(0?[1-9]|1[012])[:\\-\s]([0-5]*\d)([:\\-\s][APap][mM])?$/">
-		<div class="bg-danger" ng-show="schedule.$submitted && schedule.endTime.$error.required">End Time is required</div>
-		<div class="bg-danger" ng-show="schedule.$submitted && schedule.endTime.$error.pattern">Pattern does not match</div>
+	<div class="row">
+		<div class="form-group col-md-4" ng-class="{'has-error': form.$submitted && form.endTime.$invalid}">
+			<input type="text" name="endTime" class="form-control" placeholder="End time" 
+				ng-model="sub_schedule.end_time"
+				ng-required="true" 
+				ng-pattern="/^(0?[1-9]|1[012])[:\\-\s]([0-5]*\d)([:\\-\s][APap][mM])?$/">
+			<div class="bg-danger" ng-show="schedule.$submitted && schedule.endTime.$error.required">End Time is required</div>
+			<div class="bg-danger" ng-show="schedule.$submitted && schedule.endTime.$error.pattern">Pattern does not match</div>
+		</div>
 	</div>
-	<div class="form-group" ng-class="{'has-error': form.$submitted && form.presenter.$invalid}">
-		<input type="text" name="presenter" class="form-control" placeholder="Presenter" 
-			ng-model="sub_schedule.presenter"
-			ng-required="true">
-		<div class="bg-danger" ng-show="schedule.$submitted && schedule.presenter.$error.required">Presenter Time is required</div>
+	<div class="row">
+		<div class="form-group col-md-6" ng-class="{'has-error': form.$submitted && form.presenter.$invalid}">
+			<input type="text" name="presenter" class="form-control" placeholder="Presenter" 
+				ng-model="sub_schedule.presenter"
+				ng-required="true">
+			<div class="bg-danger" ng-show="schedule.$submitted && schedule.presenter.$error.required">Presenter Time is required</div>
+		</div>
 	</div>
-	<div class="form-group" ng-class="{'has-error': form.$submitted && form.lead.$invalid}">
-		<input type="text" name="lead" class="form-control" placeholder="Lead" 
-			ng-model="sub_schedule.lead"
-			ng-required="true">
-			<div class="bg-danger" ng-show="schedule.$submitted && schedule.lead.$error.required">Lead Time is required</div>
+	<div class="row">
+		<div class="form-group col-md-6" ng-class="{'has-error': form.$submitted && form.lead.$invalid}">
+			<input type="text" name="lead" class="form-control" placeholder="Lead" 
+				ng-model="sub_schedule.lead"
+				ng-required="true">
+				<div class="bg-danger" ng-show="schedule.$submitted && schedule.lead.$error.required">Lead Time is required</div>
+		</div>
 	</div>
-	<div class="form-group">
-		<label class="checkbox-inline" ng-repeat="resource in resources">
+	<div class="checkbox" ng-repeat="resource in resources">
+		<label>
 			<input type="checkbox" checklist-model="sub_schedule.resources" checklist-value="resource.id"> {{ resource.name }}
 		</label>
 	</div>
