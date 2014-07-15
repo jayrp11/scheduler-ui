@@ -1,3 +1,7 @@
 .resource_name {
 	margin-right: 3px;
 }
+
+form p.errors {
+	padding: 15px;
+}

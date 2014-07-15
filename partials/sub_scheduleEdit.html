@@ -1,4 +1,5 @@
 <form class="form" name="schedule" valid-submit="edit()" novalidate>
+	<p class="errors bg-danger" ng-show="error">{{ error }}</p>
 	<div class="row">
 		<div class="form-group col-md-8" ng-class="{'has-error': form.$submitted && form.title.$invalid}">
 			<input type="text" name="title" class="form-control" placeholder="Title" ng-model="sub_schedule.title"

@@ -193,8 +193,11 @@ app.controller('SubScheduleNewController', ['$scope', '$location', '$routeParams
     schedule.all('sub_schedules').post($scope.sub_schedule).then(function($sub_schedule) {
       console.log($sub_schedule.id);
       $location.path('/schedules/' + $sub_schedule.schedule_id + '/edit');
-    }, function() {
+    }, function(response) {
       console.log("Error");
+      if(response.status === 400) {
+        $scope.error = response.data.error.message;
+      }
     });
   };
 
@@ -230,8 +233,11 @@ app.controller('SubScheduleEditController', ['$scope', '$location', '$routeParam
     $scope.sub_schedule.put().then(function($sub_schedule) {
       console.log($sub_schedule.id);
       $location.path('/schedules/' + $sub_schedule.schedule_id + '/edit');
-    }, function() {
+    }, function(response) {
       console.log("Error");
+      if(response.status === 400) {
+        $scope.error = response.data.error.message;
+      }
     });
   };
 }]);
