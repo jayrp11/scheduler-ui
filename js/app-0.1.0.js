@@ -50,6 +50,22 @@ app.config(['$routeProvider', function($routeProvider) {
       { redirectTo: '/schedules' });
 }]);
 
+app.factory('SubScheduleTitleService', ['$location', function($location) { 
+  service = {
+    titles: [
+      'Dhun',
+      'Prarthana',
+      'Stuti',
+      'MC',
+      'Kirtan - Chorus ',
+      'Kirtan - Solo',
+      'Pravachan',
+      'Special Announcements'
+    ]
+  }
+  return service;
+}])
+
 app.factory('AuthService', ['$location', '$http','Restangular', function($location, $http, Restangular) {
   service = {
     currentUser: null,
@@ -182,13 +198,15 @@ app.factory('SubScheduleService', ['$location', 'Restangular', function($locatio
   return service;
 }]);
 
-app.controller('SubScheduleNewController', ['$scope', '$location', '$routeParams', 'Restangular', function($scope, $location, $routeParams, Restangular) {
+app.controller('SubScheduleNewController', ['$scope', '$location', '$routeParams', 'Restangular', 'SubScheduleTitleService', function($scope, $location, $routeParams, Restangular, SubScheduleTitleService) {
   var schedule = Restangular.one('schedules', $routeParams.scheduleId);
 
   Restangular.all('assets').getList().then(function($resources) {
     $scope.resources = $resources;
   });
   
+  $scope.titles = SubScheduleTitleService.titles;
+
   $scope.submit = function() {
     schedule.all('sub_schedules').post($scope.sub_schedule).then(function($sub_schedule) {
       console.log($sub_schedule.id);
