@@ -1,10 +1,11 @@
 <form class="form" name="schedule" valid-submit="edit()" novalidate>
+	<h1>Edit Event</h1>
 	<p class="errors bg-danger" ng-show="error">{{ error }}</p>
 	<div class="row">
 		<div class="form-group col-md-8" ng-class="{'has-error': form.$submitted && form.title.$invalid}">
-			<input type="text" name="title" class="form-control" placeholder="Title" ng-model="sub_schedule.title"
-				ng-required="true">
+			<input type="text" name="title" class="form-control" placeholder="Title" ng-model="sub_schedule.title" typeahead="title for title in titles | filter:$viewValue | limitTo:8" ng-required="true" typeahead-editable="false">
 			<div class="bg-danger" ng-show="schedule.$submitted && schedule.title.$error.required">Title is required</div>
+			<div class="bg-danger" ng-show="schedule.$submitted && schedule.title.$error.editable">Title must be selected from defined values</div>
 		</div>
 	</div>
 	<div class="row">

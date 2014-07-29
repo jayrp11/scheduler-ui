@@ -231,9 +231,11 @@ app.controller('SubScheduleNewController', ['$scope', '$location', '$routeParams
   }
 }]);
 
-app.controller('SubScheduleEditController', ['$scope', '$location', '$routeParams', 'Restangular', function($scope, $location, $routeParams, Restangular) {
+app.controller('SubScheduleEditController', ['$scope', '$location', '$routeParams', 'Restangular', 'SubScheduleTitleService', function($scope, $location, $routeParams, Restangular, SubScheduleTitleService) {
   var sub_schedule = Restangular.one('schedules', $routeParams.scheduleId).one('sub_schedules', $routeParams.sub_scheduleId);
-  
+
+  $scope.titles = SubScheduleTitleService.titles;
+
   sub_schedule.get().then(function($sub_schedule) {
     resources = [];
     angular.forEach($sub_schedule['resources'], function(value, key) {
