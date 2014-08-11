@@ -44,6 +44,12 @@
 			<div class="bg-danger" ng-show="schedule.$submitted && schedule.lead.$error.required">Lead Time is required</div>
 		</div>
 	</div>
+	<div class="row">
+		<div class="form-group col-md-6" ng-class="{'has-error': form.$submitted && form.notes.$invalid}">
+			<input type="text" name="notes" class="form-control" placeholder="Notes" 
+				ng-model="sub_schedule.notes">
+		</div>
+	</div>
 	<div class="checkbox" ng-repeat="resource in resources">
 		<label>
 			<input type="checkbox" checklist-model="sub_schedule.resources" checklist-value="resource.id"> {{ resource.name }}

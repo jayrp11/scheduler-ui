@@ -1,4 +1,5 @@
 <form class="form" name="schedule" valid-submit="submit()" novalidate>
+	<h1>Add Event</h1>
 	<p class="errors bg-danger" ng-show="error">{{ error }}</p>
 	<div class="row">
 		<div class="form-group col-md-8" ng-class="{'has-error': form.$submitted && form.title.$invalid}">
@@ -41,6 +42,12 @@
 				ng-model="sub_schedule.lead"
 				ng-required="true">
 				<div class="bg-danger" ng-show="schedule.$submitted && schedule.lead.$error.required">Lead Time is required</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="form-group col-md-6" ng-class="{'has-error': form.$submitted && form.notes.$invalid}">
+			<input type="text" name="notes" class="form-control" placeholder="Notes" 
+				ng-model="sub_schedule.notes">
 		</div>
 	</div>
 	<div class="checkbox" ng-repeat="resource in resources">
