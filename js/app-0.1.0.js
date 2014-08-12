@@ -140,7 +140,7 @@ app.factory('SubScheduleTitleService', ['$location', function($location) {
 }])
 
 app.factory('AuthService', ['$location', '$http','Restangular', function($location, $http, Restangular) {
-  service = {
+  var service = {
     currentUser: null,
     login: function(user) {
       var req = $http.post('/scheduler-api/auth/login', user)
@@ -195,10 +195,23 @@ app.controller('AuthController', ['$scope', '$location','AuthService', function(
 }]);
 
 app.controller('ScheduleListController', ['$scope', '$location', 'Restangular', function($scope, $location, Restangular) {
-  var schedules = Restangular.all('schedules');
+  $scope.isCollapsed = true;
+  var schedules = Restangular.all('schedules/upcoming');
   schedules.getList().then(function($schedules) {
     $scope.schedules = $schedules;
   });
+
+  $scope.hidePast = function() {
+    $scope.isCollapsed = true;
+  }
+
+  $scope.showPast = function() {
+    var pastSchedules = Restangular.all('schedules/past');
+    pastSchedules.getList().then(function($schedules) {
+      $scope.pastSchedules = $schedules;
+    });
+    $scope.isCollapsed = false;
+  }
 
   $scope.showDetail = function($schedule) {
     $location.path('/schedules/' + $schedule.id);

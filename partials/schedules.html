@@ -1,4 +1,5 @@
 <div> 
+  <h1>Upcomming</h1>
   <table class="table table-striped table-bordered">
     <thead>
       <tr>
@@ -13,6 +14,27 @@
       </tr>
     </tbody>
   </table>
+
+  <h1>Past
+    <span class="glyphicon glyphicon-chevron-down" ng-click="showPast()" ng-show="isCollapsed"></span>
+    <span class="glyphicon glyphicon-chevron-up" ng-click="hidePast()" ng-hide="isCollapsed"></span>
+  </h1>
+  <div collapse="isCollapsed">
+    <table class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Theme</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="schedule in pastSchedules" ng-click="showDetail(schedule)">
+          <td>{{ schedule.s_date }}</a></td>
+          <td>{{ schedule.theme }}</td>
+        </tr>
+      </tbody>
+    </table>    
+  </div>
   <a class="btn btn-default" href="#/schedules/new" role="button">New Schedule</a>
 </div>
  
