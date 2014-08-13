@@ -5,3 +5,11 @@
 form p.errors {
 	padding: 15px;
 }
+
+table .date {
+	width: 20%;
+}
+
+table .theme {
+	width: 80%;
+}

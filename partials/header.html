@@ -9,6 +9,9 @@
 			<a class="navbar-brand" ng-click="home()">Scheduler</a>
 		</div>
 		<div class="collapse navbar-collapse navbar-right" ng-class="!navCollapsed && 'in'" ng-click="navCollapsed=true">
-			<button type="button" class="btn btn-default navbar-btn" ng-show="isAuthenticated()" ng-click="logout()">Log out</button>
+			<ul class="nav navbar-nav">
+				<li><a href="#/schedules/new" ng-show="isUser() || isAdmin()">New Schedule</a></li>
+				<li><a href="#" ng-show="isAuthenticated()" ng-click="logout()">Log out</a></li>
+			</ul>
 		</div>
 </nav>

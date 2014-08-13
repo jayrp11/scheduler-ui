@@ -160,7 +160,7 @@ app.factory('AuthService', ['$location', '$http','Restangular', function($locati
     },
 
     requestCurrentUser: function() {
-      if ( this.isAuthenticated() ) {
+      if ( service.isAuthenticated() ) {
         return service.currentUser;
       } else {
         return $http.get('/scheduler-api/auth/currentUser').then(function(response) {
@@ -168,6 +168,18 @@ app.factory('AuthService', ['$location', '$http','Restangular', function($locati
           return service.currentUser;
         });
       }
+    }, 
+
+    isUser: function() {
+      if(service.isAuthenticated() && service.currentUser.authlevel < 51)
+        return true;
+      return false;
+    },
+
+    isAdmin: function() {
+      if(service.isAuthenticated() && service.currentUser.authlevel < 1)
+        return true;
+      return false;
     }
   };
   return service;
@@ -175,6 +187,8 @@ app.factory('AuthService', ['$location', '$http','Restangular', function($locati
 
 app.controller('HeaderCtrl', ['$scope', '$location','AuthService', function($scope, $location, AuthService) { 
   $scope.isAuthenticated = AuthService.isAuthenticated;
+  $scope.isUser = AuthService.isUser;
+  $scope.isAdmin = AuthService.isAdmin;
 
   $scope.home = function () {
     $location.path('/schedules');
@@ -218,7 +232,9 @@ app.controller('ScheduleListController', ['$scope', '$location', 'Restangular', 
   }
 }]);
 
-app.controller('ScheduleDetailController', ['$scope', '$location', '$routeParams', '$filter','Restangular', function($scope, $location, $routeParams, $filter, Restangular) {
+app.controller('ScheduleDetailController', ['$scope', '$location', '$routeParams', '$filter','Restangular', 'AuthService', function($scope, $location, $routeParams, $filter, Restangular, AuthService) {
+  $scope.isUser = AuthService.isUser;
+  $scope.isAdmin = AuthService.isAdmin;
   var schedule = Restangular.one('schedules/' + $routeParams.scheduleId);
   schedule.get().then(function($schedule) {
     $scope.schedule = $schedule;
@@ -277,13 +293,6 @@ app.controller('ScheduleEditController', ['$scope', '$location', '$routeParams',
   }
 }]);
 
-app.factory('SubScheduleService', ['$location', 'Restangular', function($location, $http, Restangular) {
-  service = {
-    
-  };
-  return service;
-}]);
-
 app.controller('SubScheduleNewController', ['$scope', '$location', '$routeParams', 'Restangular', 'SubScheduleTitleService', function($scope, $location, $routeParams, Restangular, SubScheduleTitleService) {
   var schedule = Restangular.one('schedules', $routeParams.scheduleId);
 
@@ -304,17 +313,6 @@ app.controller('SubScheduleNewController', ['$scope', '$location', '$routeParams
       }
     });
   };
-
-  $scope.time = function(input) {
-    console.log(input);
-    var regex = /^(0?[1-9]|1[012])[:\\-\s]([0-5]*\d)([:\\-\s]([APap][mM]))?$/
-    var match = regex.exec($scope.sub_schedule.start_time);
-    if(match) {
-      console.log(match[1])
-      console.log(match[2])
-      console.log(match[4])
-    }
-  }
 }]);
 
 app.controller('SubScheduleEditController', ['$scope', '$location', '$routeParams', 'Restangular', 'SubScheduleTitleService', function($scope, $location, $routeParams, Restangular, SubScheduleTitleService) {
