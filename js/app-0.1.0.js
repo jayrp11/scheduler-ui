@@ -263,7 +263,9 @@ app.controller('ScheduleNewController', ['$scope', '$location', 'Restangular', f
   };
 }]);
 
-app.controller('ScheduleEditController', ['$scope', '$location', '$routeParams', '$filter', 'Restangular', function($scope, $location, $routeParams, $filter, Restangular) {
+app.controller('ScheduleEditController', ['$scope', '$location', '$routeParams', '$filter', 'Restangular', 'AuthService', function($scope, $location, $routeParams, $filter, Restangular, AuthService) {
+  $scope.isUser = AuthService.isUser;
+  $scope.isAdmin = AuthService.isAdmin;
   var schedule = Restangular.one('schedules', $routeParams.scheduleId);
   schedule.get().then(function($schedule) {
     $scope.schedule = $schedule;
@@ -289,6 +291,14 @@ app.controller('ScheduleEditController', ['$scope', '$location', '$routeParams',
       $location.path('/schedules/' + $schedule.id);
     }, function($schedule) {
       console.log('Error saving schedule');
+    });
+  }
+
+  $scope.lock = function() {
+    Restangular.oneUrl('lock', '/scheduler-api/schedules/' + 'lock/' + $scope.schedule.id ).post().then(function($schedule) {
+      console.log('Locked')
+    }, function($resp) {
+      console.log('Error while locking');
     });
   }
 }]);

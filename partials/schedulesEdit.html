@@ -40,6 +40,7 @@
     </tbody>
   </table>
   <div class="form-group">
+    <button type="button" class="btn btn-default" ng-click="lock(schedule)" ng-show="isUser() || isAdmin()">Lock Schedule</button>
     <button type="button" class="btn btn-default" ng-click="addSubSchedule(schedule)">Add Schedule</button>
     <button type="submit" class="btn btn-primary">Save</button>
   </div>
