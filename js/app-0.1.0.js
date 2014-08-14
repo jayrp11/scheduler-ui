@@ -177,7 +177,7 @@ app.factory('AuthService', ['$location', '$http','Restangular', function($locati
     },
 
     isAdmin: function() {
-      if(service.isAuthenticated() && service.currentUser.authlevel < 1)
+      if(service.isAuthenticated() && service.currentUser.authlevel < 11)
         return true;
       return false;
     }
@@ -233,8 +233,6 @@ app.controller('ScheduleListController', ['$scope', '$location', 'Restangular', 
 }]);
 
 app.controller('ScheduleDetailController', ['$scope', '$location', '$routeParams', '$filter','Restangular', 'AuthService', function($scope, $location, $routeParams, $filter, Restangular, AuthService) {
-  $scope.isUser = AuthService.isUser;
-  $scope.isAdmin = AuthService.isAdmin;
   var schedule = Restangular.one('schedules/' + $routeParams.scheduleId);
   schedule.get().then(function($schedule) {
     $scope.schedule = $schedule;
@@ -242,6 +240,22 @@ app.controller('ScheduleDetailController', ['$scope', '$location', '$routeParams
 
   $scope.edit = function($schedule) {
     $location.path('/schedules/' + $schedule.id + '/edit');
+  }
+
+  $scope.isEditable = function() {
+    return (AuthService.isUser() || AuthService.isAdmin()) && $scope.schedule && $scope.schedule.locked == 0;
+  }
+
+  $scope.showUnlock = function() {
+    return AuthService.isAdmin() && $scope.schedule && $scope.schedule.locked == 1;
+  }
+
+  $scope.unlock = function() {
+    Restangular.oneUrl('lock', '/scheduler-api/schedules/unlock/' + $scope.schedule.id ).post().then(function($schedule) {
+      $location.path('/schedules');
+    }, function($resp) {
+      console.log('Error while unlocking');
+    });
   }
 }]);
 
@@ -296,7 +310,7 @@ app.controller('ScheduleEditController', ['$scope', '$location', '$routeParams',
 
   $scope.lock = function() {
     Restangular.oneUrl('lock', '/scheduler-api/schedules/' + 'lock/' + $scope.schedule.id ).post().then(function($schedule) {
-      console.log('Locked')
+      $location.path('/schedules/' + $schedule.id);
     }, function($resp) {
       console.log('Error while locking');
     });

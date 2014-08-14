@@ -24,6 +24,7 @@
     </tbody>
   </table>
   <div class="form-group">
-    <button type="button" class="btn btn-default" ng-click="edit(schedule)" ng-show="isUser() || isAdmin()">Edit Schedule</button>
+    <button type="button" class="btn btn-default" ng-click="unlock(schedule)" ng-show="showUnlock()">Unlock Schedule</button>
+    <button type="button" class="btn btn-default" ng-click="edit(schedule)" ng-show="isEditable()">Edit Schedule</button>
   </div>
 </div>
