@@ -2,6 +2,13 @@ var app = angular.module('schedular-ui', [ 'ngRoute', 'restangular', 'ui.bootstr
 
 app.config(function(RestangularProvider) {
   RestangularProvider.setBaseUrl('/scheduler-api/');
+
+  RestangularProvider.setRequestInterceptor(function(elem, operation) {
+    if (operation === "remove") {
+       return undefined;
+    } 
+    return elem;
+  });
 });
 
 app.run(['Restangular', '$location', 'AuthService', function(Restangular, $location, AuthService) {
@@ -177,7 +184,7 @@ app.factory('AuthService', ['$location', '$http','Restangular', function($locati
     },
 
     isAdmin: function() {
-      if(service.isAuthenticated() && service.currentUser.authlevel < 1)
+      if(service.isAuthenticated() && service.currentUser.authlevel < 11)
         return true;
       return false;
     }
@@ -233,8 +240,6 @@ app.controller('ScheduleListController', ['$scope', '$location', 'Restangular', 
 }]);
 
 app.controller('ScheduleDetailController', ['$scope', '$location', '$routeParams', '$filter','Restangular', 'AuthService', function($scope, $location, $routeParams, $filter, Restangular, AuthService) {
-  $scope.isUser = AuthService.isUser;
-  $scope.isAdmin = AuthService.isAdmin;
   var schedule = Restangular.one('schedules/' + $routeParams.scheduleId);
   schedule.get().then(function($schedule) {
     $scope.schedule = $schedule;
@@ -243,9 +248,25 @@ app.controller('ScheduleDetailController', ['$scope', '$location', '$routeParams
   $scope.edit = function($schedule) {
     $location.path('/schedules/' + $schedule.id + '/edit');
   }
+
+  $scope.isEditable = function() {
+    return (AuthService.isUser() || AuthService.isAdmin()) && $scope.schedule && $scope.schedule.locked == 0;
+  }
+
+  $scope.showUnlock = function() {
+    return AuthService.isAdmin() && $scope.schedule && $scope.schedule.locked == 1;
+  }
+
+  $scope.unlock = function() {
+    Restangular.oneUrl('lock', '/scheduler-api/schedules/unlock/' + $scope.schedule.id ).post().then(function($schedule) {
+      $location.path('/schedules');
+    }, function($resp) {
+      console.log('Error while unlocking');
+    });
+  }
 }]);
 
-app.controller('ScheduleNewController', ['$scope', '$location', 'Restangular', function($scope, $location, Restangular) {
+app.controller('ScheduleNewController', ['$scope', '$location', 'Restangular', '$filter',function($scope, $location, Restangular, $filter) {
   $scope.open = function($event) {
     $event.preventDefault();
     $event.stopPropagation();
@@ -254,8 +275,8 @@ app.controller('ScheduleNewController', ['$scope', '$location', 'Restangular', f
   };
 
   $scope.submit = function() {
+    $scope.schedule['s_date'] = $filter('date')($scope.schedule['s_date'], 'yyyy-MM-dd');
     Restangular.all('schedules').post($scope.schedule).then(function($schedule) {
-      console.log($schedule.id);
       $location.path('/schedules/' + $schedule.id + '/edit');
     }, function() {
       console.log("Error");
@@ -263,7 +284,9 @@ app.controller('ScheduleNewController', ['$scope', '$location', 'Restangular', f
   };
 }]);
 
-app.controller('ScheduleEditController', ['$scope', '$location', '$routeParams', '$filter', 'Restangular', function($scope, $location, $routeParams, $filter, Restangular) {
+app.controller('ScheduleEditController', ['$scope', '$location', '$routeParams', '$filter', 'Restangular', 'AuthService', '$modal', function($scope, $location, $routeParams, $filter, Restangular, AuthService, $modal) {
+  $scope.isUser = AuthService.isUser;
+  $scope.isAdmin = AuthService.isAdmin;
   var schedule = Restangular.one('schedules', $routeParams.scheduleId);
   schedule.get().then(function($schedule) {
     $scope.schedule = $schedule;
@@ -291,6 +314,14 @@ app.controller('ScheduleEditController', ['$scope', '$location', '$routeParams',
       console.log('Error saving schedule');
     });
   }
+
+  $scope.lock = function() {
+    Restangular.oneUrl('lock', '/scheduler-api/schedules/' + 'lock/' + $scope.schedule.id ).post().then(function($schedule) {
+      $location.path('/schedules/' + $schedule.id);
+    }, function($resp) {
+      console.log('Error while locking');
+    });
+  }
 }]);
 
 app.controller('SubScheduleNewController', ['$scope', '$location', '$routeParams', 'Restangular', 'SubScheduleTitleService', function($scope, $location, $routeParams, Restangular, SubScheduleTitleService) {
@@ -304,7 +335,6 @@ app.controller('SubScheduleNewController', ['$scope', '$location', '$routeParams
 
   $scope.submit = function() {
     schedule.all('sub_schedules').post($scope.sub_schedule).then(function($sub_schedule) {
-      console.log($sub_schedule.id);
       $location.path('/schedules/' + $sub_schedule.schedule_id + '/edit');
     }, function(response) {
       console.log("Error");
@@ -312,10 +342,10 @@ app.controller('SubScheduleNewController', ['$scope', '$location', '$routeParams
         $scope.error = response.data.error.message;
       }
     });
-  };
+  }
 }]);
 
-app.controller('SubScheduleEditController', ['$scope', '$location', '$routeParams', 'Restangular', 'SubScheduleTitleService', function($scope, $location, $routeParams, Restangular, SubScheduleTitleService) {
+app.controller('SubScheduleEditController', ['$scope', '$location', '$routeParams', 'Restangular', 'SubScheduleTitleService', '$modal', function($scope, $location, $routeParams, Restangular, SubScheduleTitleService, $modal) {
   var sub_schedule = Restangular.one('schedules', $routeParams.scheduleId).one('sub_schedules', $routeParams.sub_scheduleId);
 
   $scope.titles = SubScheduleTitleService.titles;
@@ -343,7 +373,34 @@ app.controller('SubScheduleEditController', ['$scope', '$location', '$routeParam
         $scope.error = response.data.error.message;
       }
     });
-  };
+  }
+
+  $scope.openDltModel = function() {
+    var modalInstance = $modal.open({
+      templateUrl: 'partials/deleteModal.html',
+      controller: function ($scope, $modalInstance) {
+        $scope.ok = function () {
+          $modalInstance.close();
+        }
+        $scope.cancel = function () {
+          $modalInstance.dismiss('cancel');
+        }
+      },
+      resolve: {
+        sub_schedule: function() {
+          return $scope.sub_schedule;
+        }
+      }
+    });
+
+    modalInstance.result.then(function () {
+      $scope.sub_schedule.remove().then(function() {
+        $location.path('/schedules/' + $scope.sub_schedule.schedule_id + '/edit');
+      }, function() {
+        console.log('error while delete');
+      });
+    });
+  }
 }]);
 
 // directive that prevents submit if there are still form errors
