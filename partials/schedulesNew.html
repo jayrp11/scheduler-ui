@@ -11,7 +11,7 @@
       <div class="input-group">
         <input type="text" name="s_date" class="form-control" datepicker-popup="dd-MM-yyyy" ng-model="schedule.s_date" is-open="opened" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
         <span class="input-group-btn">
-          <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+          <button type="button" class="btn btn-default" ng-click="open($event)"><i class="fa fa-calendar"></i></button>
         </span>
       </div>
       <div class="bg-danger" ng-show="schedule_form.$submitted && schedule_form.s_date.$error.required">Date is required</div>

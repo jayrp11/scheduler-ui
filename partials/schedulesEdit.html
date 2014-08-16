@@ -11,34 +11,24 @@
     <div class="input-group">
       <input type="text" name="s_date" class="form-control" datepicker-popup="dd-MM-yyyy" ng-model="schedule.s_date" is-open="opened" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
       <span class="input-group-btn">
-        <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+        <button type="button" class="btn btn-default" ng-click="open($event)"><i class="fa fa-calendar"></i></button>
       </span>
     </div>
     <div class="bg-danger" ng-show="schedule_form.$submitted && schedule_form.s_date.$error.required">Date is required</div>
   </div>
   </div>
-  <table class="table table-striped table-bordered">
-    <thead>
-      <tr>
-        <th style="width:30%">Title</th>
-        <th style="width:10%">Start time</th>
-        <th style="width:10%">End time</th>
-        <th style="width:10%">Presenter</th>
-        <th style="width:10%">Lead</th>
-        <th style="width:30%">Resources</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr ng-repeat="sub_schedule in schedule.sub_schedules" ng-click="editDetail(sub_schedule)">
-        <td>{{ sub_schedule.title }}</td>
-        <td>{{ sub_schedule.start_time }}</td>
-        <td>{{ sub_schedule.end_time }}</td>
-        <td>{{ sub_schedule.presenter }}</td>
-        <td>{{ sub_schedule.lead }}</td>
-        <td><span class="badge resource_name" ng-repeat="resource in sub_schedule.resources">{{ resource.name }}</span></td>
-      </tr>
-    </tbody>
-  </table>
+
+  <ul class="list-group">
+    <a ng-repeat="sub_schedule in schedule.sub_schedules" class="list-group-item" ng-click="editDetail(sub_schedule)">
+      <h4>{{ sub_schedule.title }}</h4>
+      <h5><span class="fa fa-clock-o"></span> {{ sub_schedule.start_time }}-{{ sub_schedule.end_time }}</h5>
+      <div><em>Presented by </em>{{ sub_schedule.presenter }}</div>
+      <div><em>Leaded by </em>{{ sub_schedule.lead }}</div>
+      <div ng-show="sub_schedule.notes"><em>Notes </em>{{ sub_schedule.notes }}</div>
+      <span class="label label-default resource_name" ng-repeat="resource in sub_schedule.resources">{{ resource.name }}</span>
+    </a>
+  </ul>
+
   <div class="form-group">
     <button type="button" class="btn btn-default" ng-click="lock(schedule)" ng-show="isUser() || isAdmin()">Lock Schedule</button>
     <button type="button" class="btn btn-default" ng-click="addSubSchedule(schedule)">Add Schedule</button>
