@@ -239,7 +239,7 @@ app.controller('ScheduleListController', ['$scope', '$location', 'Restangular', 
   }
 }]);
 
-app.controller('ScheduleDetailController', ['$scope', '$location', '$routeParams', '$filter','Restangular', 'AuthService', function($scope, $location, $routeParams, $filter, Restangular, AuthService) {
+app.controller('ScheduleDetailController', ['$scope', '$location', '$routeParams', '$filter','Restangular', 'AuthService', '$log', function($scope, $location, $routeParams, $filter, Restangular, AuthService, $log) {
   var schedule = Restangular.one('schedules/' + $routeParams.scheduleId);
   schedule.get().then(function($schedule) {
     $scope.schedule = $schedule;
@@ -261,12 +261,12 @@ app.controller('ScheduleDetailController', ['$scope', '$location', '$routeParams
     Restangular.oneUrl('lock', '/scheduler-api/schedules/unlock/' + $scope.schedule.id ).post().then(function($schedule) {
       $location.path('/schedules');
     }, function($resp) {
-      console.log('Error while unlocking');
+      $log.error('Error while unlocking');
     });
   }
 }]);
 
-app.controller('ScheduleNewController', ['$scope', '$location', 'Restangular', '$filter',function($scope, $location, Restangular, $filter) {
+app.controller('ScheduleNewController', ['$scope', '$location', 'Restangular', '$filter', '$log', function($scope, $location, Restangular, $filter, $log) {
   $scope.open = function($event) {
     $event.preventDefault();
     $event.stopPropagation();
@@ -279,12 +279,12 @@ app.controller('ScheduleNewController', ['$scope', '$location', 'Restangular', '
     Restangular.all('schedules').post($scope.schedule).then(function($schedule) {
       $location.path('/schedules/' + $schedule.id + '/edit');
     }, function() {
-      console.log("Error");
+      $log.error("Error while creating new schedule.");
     });
   };
 }]);
 
-app.controller('ScheduleEditController', ['$scope', '$location', '$routeParams', '$filter', 'Restangular', 'AuthService', '$modal', function($scope, $location, $routeParams, $filter, Restangular, AuthService, $modal) {
+app.controller('ScheduleEditController', ['$scope', '$location', '$routeParams', '$filter', 'Restangular', 'AuthService', '$modal', '$log', function($scope, $location, $routeParams, $filter, Restangular, AuthService, $modal, $log) {
   $scope.isUser = AuthService.isUser;
   $scope.isAdmin = AuthService.isAdmin;
   var schedule = Restangular.one('schedules', $routeParams.scheduleId);
@@ -311,7 +311,7 @@ app.controller('ScheduleEditController', ['$scope', '$location', '$routeParams',
     $scope.schedule.put().then(function($schedule) {
       $location.path('/schedules/' + $schedule.id);
     }, function($schedule) {
-      console.log('Error saving schedule');
+      $log.error('Error saving schedule');
     });
   }
 
@@ -319,12 +319,12 @@ app.controller('ScheduleEditController', ['$scope', '$location', '$routeParams',
     Restangular.oneUrl('lock', '/scheduler-api/schedules/' + 'lock/' + $scope.schedule.id ).post().then(function($schedule) {
       $location.path('/schedules/' + $schedule.id);
     }, function($resp) {
-      console.log('Error while locking');
+      $log.error('Error while locking');
     });
   }
 }]);
 
-app.controller('SubScheduleNewController', ['$scope', '$location', '$routeParams', 'Restangular', 'SubScheduleTitleService', function($scope, $location, $routeParams, Restangular, SubScheduleTitleService) {
+app.controller('SubScheduleNewController', ['$scope', '$location', '$routeParams', 'Restangular', 'SubScheduleTitleService', '$log', function($scope, $location, $routeParams, Restangular, SubScheduleTitleService, $log) {
   var schedule = Restangular.one('schedules', $routeParams.scheduleId);
 
   Restangular.all('assets').getList().then(function($resources) {
@@ -337,7 +337,7 @@ app.controller('SubScheduleNewController', ['$scope', '$location', '$routeParams
     schedule.all('sub_schedules').post($scope.sub_schedule).then(function($sub_schedule) {
       $location.path('/schedules/' + $sub_schedule.schedule_id + '/edit');
     }, function(response) {
-      console.log("Error");
+      $log.error("Error while creating new sub schedule.");
       if(response.status === 400) {
         $scope.error = response.data.error.message;
       }
@@ -345,7 +345,7 @@ app.controller('SubScheduleNewController', ['$scope', '$location', '$routeParams
   }
 }]);
 
-app.controller('SubScheduleEditController', ['$scope', '$location', '$routeParams', 'Restangular', 'SubScheduleTitleService', '$modal', function($scope, $location, $routeParams, Restangular, SubScheduleTitleService, $modal) {
+app.controller('SubScheduleEditController', ['$scope', '$location', '$routeParams', 'Restangular', 'SubScheduleTitleService', '$modal', '$log', function($scope, $location, $routeParams, Restangular, SubScheduleTitleService, $modal, $log) {
   var sub_schedule = Restangular.one('schedules', $routeParams.scheduleId).one('sub_schedules', $routeParams.sub_scheduleId);
 
   $scope.titles = SubScheduleTitleService.titles;
@@ -365,10 +365,9 @@ app.controller('SubScheduleEditController', ['$scope', '$location', '$routeParam
 
   $scope.edit = function() {
     $scope.sub_schedule.put().then(function($sub_schedule) {
-      console.log($sub_schedule.id);
       $location.path('/schedules/' + $sub_schedule.schedule_id + '/edit');
     }, function(response) {
-      console.log("Error");
+      $log.error("Error while saving sub schedule.");
       if(response.status === 400) {
         $scope.error = response.data.error.message;
       }
@@ -397,7 +396,7 @@ app.controller('SubScheduleEditController', ['$scope', '$location', '$routeParam
       $scope.sub_schedule.remove().then(function() {
         $location.path('/schedules/' + $scope.sub_schedule.schedule_id + '/edit');
       }, function() {
-        console.log('error while delete');
+        $log.error('Error while deleting sub schedule');
       });
     });
   }
