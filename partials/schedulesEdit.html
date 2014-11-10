@@ -1,9 +1,9 @@
 <form class="form" name="schedule_form" valid-submit="save()" novalidate>
   <div class="row">
   	<div class="form-group col-md-8" ng-class="{'has-error': form.$submitted && form.theme.$invalid}">
-      <input type="text" name="theme" class="form-control" placeholder="Theme" ng-model="schedule.theme"
+      <input type="text" name="theme" class="form-control" placeholder="Event name" ng-model="schedule.theme"
         ng-required="true">
-      <div class="bg-danger" ng-show="schedule_form.$submitted && schedule_form.theme.$error.required">Theme is required</div>
+      <div class="bg-danger" ng-show="schedule_form.$submitted && schedule_form.theme.$error.required">Event name is required</div>
     </div>
   </div>
   <div class="row">
@@ -23,7 +23,7 @@
       <h4>{{ sub_schedule.title }}</h4>
       <h5><span class="fa fa-clock-o"></span> {{ sub_schedule.start_time }}-{{ sub_schedule.end_time }}</h5>
       <div><em>Presented by </em>{{ sub_schedule.presenter }}</div>
-      <div><em>Leaded by </em>{{ sub_schedule.lead }}</div>
+      <div ng-show="sub_schedule.lead"><em>Organized by </em>{{ sub_schedule.lead }}</div>
       <div ng-show="sub_schedule.notes"><em>Notes </em>{{ sub_schedule.notes }}</div>
       <span class="label label-default resource_name" ng-repeat="resource in sub_schedule.resources">{{ resource.name }}</span>
     </a>

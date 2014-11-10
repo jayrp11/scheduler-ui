@@ -1,9 +1,9 @@
 <form class="form" name="schedule_form" valid-submit="submit()" novalidate>
   <div class="row">
   	<div class="form-group col-md-8" ng-class="{'has-error': form.$submitted && form.theme.$invalid}">
-      <input type="text" name="theme" class="form-control" placeholder="Theme" ng-model="schedule.theme"
+      <input type="text" name="theme" class="form-control" placeholder="Event name" ng-model="schedule.theme"
         ng-required="true">
-      <div class="bg-danger" ng-show="schedule_form.$submitted && schedule_form.theme.$error.required">Theme is required</div>
+      <div class="bg-danger" ng-show="schedule_form.$submitted && schedule_form.theme.$error.required">Event name is required</div>
   	</div>
   </div>
   <div class="row">

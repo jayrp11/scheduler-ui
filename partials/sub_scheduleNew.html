@@ -33,15 +33,13 @@
 			<input type="text" name="presenter" class="form-control" placeholder="Presenter" 
 				ng-model="sub_schedule.presenter"
 				ng-required="true">
-			<div class="bg-danger" ng-show="schedule.$submitted && schedule.presenter.$error.required">Presenter Time is required</div>
+			<div class="bg-danger" ng-show="schedule.$submitted && schedule.presenter.$error.required">Presenter is required</div>
 		</div>
 	</div>
 	<div class="row">
 		<div class="form-group col-md-6" ng-class="{'has-error': form.$submitted && form.lead.$invalid}">
-			<input type="text" name="lead" class="form-control" placeholder="Lead" 
-				ng-model="sub_schedule.lead"
-				ng-required="true">
-				<div class="bg-danger" ng-show="schedule.$submitted && schedule.lead.$error.required">Lead Time is required</div>
+			<input type="text" name="lead" class="form-control" placeholder="Organizer" 
+				ng-model="sub_schedule.lead">
 		</div>
 	</div>
 	<div class="row">
